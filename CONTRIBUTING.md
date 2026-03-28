@@ -1,6 +1,6 @@
 # Contributing
 
-Ce fichier explique comment contribuer a ce repo publique.
+Ce fichier explique comment contribuer à ce dépôt public.
 
 ## Création de branche
 
@@ -25,13 +25,30 @@ Exemple:
 - `feature/gestion/authentification`
 - `bugfix/reservation/creation`
 
-### Créer une branche
+## Processus de contribution
+
+Afin d'ordonner les contributions proprement, suivez les étapes suivantes:
+
+### 1 - Fork le dépôt
+
+**Forker** revient a dupliquer le dépôt `https://github.com/borwni1/delirate` sur votre compte.
+Cela se fait sur la page Github (à côté du nom du dépôt, Stars, Watch).
+
+### 2 - Cloner votre fork
 
 ```
-# Récupérer le code de base
-git checkout main
-git pull origin main
+git clone https://github.com/<votre_nom_d'utilisateur>/<le_nom_de_votre_fork>.git
+cd <le_nom_de_votre_fork>
+```
 
+Travaillez sur ces fichiers.
+
+### 3 - Créer une branche
+
+Créez une branche suivant la nomenclature citée plus haut.
+
+**Exemple**:
+```
 # Changer de branche
 git checkout -b feature/gestion/auth
 
@@ -43,36 +60,22 @@ git commit -m "Mise en place d'un systeme d'auth rudimentaire"
 git push -u origin feature/gestion/auth
 ```
 
-## Faire un Pull Request (PR)
+### 4 - Pull Request
 
-1. Se diriger sur [github.com/borwni1/delirate](https://github.com/borwni1/delirate)
+Votre nouveau code doit être visible sur Github.
 
-2. Aller dans l'onglet `Pull requests`
+1. Ouvrez votre fork
 
-3. Cliquer sur `New pull request`
+2. Aller sur `Pull requests` -> `New pull request`
 
-4. Mettre dans `base` la branche qu'on veut merge, dans `compare` la branche destination
+4. A gauche: destination de la demande de merge, a droite: source qu'on veut merge; Choisissez de merge dans main, depuis votre fork
+
+5. Créez le PR
+
+**Remarque**: tous les PR doivent viser `main`.
 
 ## Revue de code / code review
 
 On passe par des PR pour simplifier l'ajout de fonctionnalités sans croisements dans le code.
 
 Code review: évaluer un PR, regarder si c'est bon pour merge ou s'il faut apporter des améliorations etc
-
-## Avant de merge
-
-1. Pas le faire tant qu'un PR n'a pas été évalué par un contributeur.
-
-2. Mention de test
-
-## Pour commencer à contribuer
-
-```
-git clone https://github.com/borwni1/delirate.git
-cd delirate
-git checkout -b mabranche
-...
-git add .
-git commit -m message
-git push up origin mabranche
-```
