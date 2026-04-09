@@ -8,10 +8,8 @@ async function usernameExists(username) {
 }
 
 async function emailExists(email) {
-    const res = await pool.query('SELECT 1 FROM users WHERE username = $1', [username]);
+    const res = await pool.query('SELECT 1 FROM users WHERE email = $1', [email]);
     return res.rowCount > 0;
 }
 
-// module.exports = { usernameExists };
-
-module.exports.usernameExists = usernameExists;
+module.exports = { usernameExists, emailExists }

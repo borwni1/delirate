@@ -1,4 +1,4 @@
-module.exports.validateUsername = function(username) {
+const validateUsername = function(username) {
     if (typeof username !== "string") {
         return false;
     }
@@ -12,7 +12,7 @@ module.exports.validateUsername = function(username) {
     return true;
 }
 
-module.exports.validateEmail = function(email) {
+const validateEmail = function(email) {
     if (typeof email !== "string") {
         return false;
     }
@@ -26,7 +26,7 @@ module.exports.validateEmail = function(email) {
     return true;
 }
 
-module.exports.validatePassword = function(password) {
+const validatePassword = function(password) {
     if (typeof password !== "string") {
         return false;
     }
@@ -41,3 +41,4 @@ module.exports.validatePassword = function(password) {
     return true;
 }
 
+module.exports = { validateUsername, validateEmail, validatePassword }

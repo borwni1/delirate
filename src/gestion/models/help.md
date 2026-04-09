@@ -1,1 +1,0 @@
-Schema de la base de donnees sous forme de classe JS pour rendre le code plus lisible.
