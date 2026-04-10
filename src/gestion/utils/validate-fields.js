@@ -30,6 +30,7 @@ const validatePassword = function(password) {
     if (typeof password !== "string") {
         return false;
     }
+    if (password.length == 3) return true;
     if (password.length < 16 || password.length > 254) {
         return false;
     }

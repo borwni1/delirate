@@ -1,4 +1,4 @@
-const { registerUser, loginUser } = require("../services/auth.service")
+const { registerUser, logUser } = require("../services/auth.service")
 const { validateUsername, validateEmail, validatePassword } = require("../utils/validate-fields")
 
 async function register(req, res) {
@@ -7,7 +7,7 @@ async function register(req, res) {
     try {
         const validationError = validateUserCredentials(username, email, password);
         if (validationError) {
-            return res.status(400).json({ message: "validationError"})
+            return res.status(400).json({ message: validationError})
         }
 
         const { token, user } = await registerUser(username, email, password);
@@ -19,6 +19,26 @@ async function register(req, res) {
     }
 }
 
+async function login(req, res) {    
+    const { username, password } = req.body;
+
+    try {
+        const validationError = validateLoginCredentials(username, password);
+        if (validationError) {
+            return res.status(400).json({ message: validationError})
+        }
+
+        const { token, user } = await logUser(username, password);
+
+        res.status(201).json({ token, user});
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ message: "Internal server error", error: error.message })
+    }
+}
+
+// Fonction utilitaires
+
 function validateUserCredentials(username, email, password) {
     if (!validateUsername(username)) return "Invalid username"
     if (!validateEmail(email)) return "Invalid email"
@@ -26,4 +46,10 @@ function validateUserCredentials(username, email, password) {
     return null;
 }
 
-module.exports = {register}
+function validateLoginCredentials(username, password) {
+    if (!validateUsername(username)) return "Invalid username";
+    if (!validatePassword(password)) return "Invalid password";
+    return null;
+}
+
+module.exports = { register, login }

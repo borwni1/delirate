@@ -23,7 +23,7 @@ async function registerUser(username, email, password) {
 
         const user = result.rows[0];
 
-        const token = jwt.sign({ id: user.id, username: user.username }, "your_jwt_secret", { expiresIn: "1h" });
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, "your_jwt_secret", { expiresIn: "1h" });
 
         return { token, user };
     } catch (error) {
@@ -31,4 +31,31 @@ async function registerUser(username, email, password) {
     }
 }
 
-module.exports = { registerUser };
+async function logUser(username, password) {
+    try {
+        const query = `
+            SELECT * FROM users WHERE username = $1
+        `;
+        const result = await pool.query(query, [username]);
+
+        const user = result.rows[0];
+
+        if (!user) {
+            throw new Error("Username does not exist");
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            throw new Error("Invalid password");
+        }
+        
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, "your_jwt_secret", { expiresIn: "1h" });
+
+        return { token, user };
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { registerUser, logUser };
