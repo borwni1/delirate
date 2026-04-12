@@ -42,4 +42,13 @@ const validatePassword = function(password) {
     return true;
 }
 
-module.exports = { validateUsername, validateEmail, validatePassword }
+const validateRole = function(role) {
+    if (typeof role !== "string")
+        return false;
+
+    if (!["USER", "GUIDE", "OWNER"].includes(role))
+        return false
+    return true
+}
+
+module.exports = { validateUsername, validateEmail, validatePassword, validateRole }

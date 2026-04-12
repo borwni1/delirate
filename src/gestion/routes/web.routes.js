@@ -14,4 +14,8 @@ router.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "../", "public", "register.html"))
 })
 
+router.get("/settings", (req, res) => {
+    res.sendFile(path.join(__dirname, "../", "public", "settings.html"))
+})
+
 module.exports = router;

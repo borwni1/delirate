@@ -9,7 +9,8 @@ const express = require("express");
 const router = new express.Router();
 const { register, login } = require("../../controllers/auth.controller");
 const path = require("path");
-
+const { authMiddleware } = require("../../middleware/auth.middleware");
+const { me, editMe } = require("../../controllers/user.controller")
 
 // // Inscription utilisateur
 // router.get("/register", (req, res) => {
@@ -24,5 +25,9 @@ const path = require("path");
 // });
 
 // router.post("/login", login);
+
+router.get("/me", authMiddleware, me);
+
+router.post("/me/edit", authMiddleware, editMe);
 
 module.exports = router;
