@@ -12,8 +12,8 @@ function renderUser() {
   const userArea = document.getElementById("userArea");
 
   if (!token) {
-    userArea.innerHTML = `<a class="px-2" href="/login">Login</a>`;
-    userArea.innerHTML += `<a class="px-2" href="/register">Register</a>`;
+    userArea.innerHTML = `<a class="px-2" href="/login">Connexion</a>`;
+    userArea.innerHTML += `<a class="px-2" href="/register">Inscription</a>`;
     return;
   }
 
@@ -21,7 +21,8 @@ function renderUser() {
 
   userArea.innerHTML = `
     <span style="color:white">Hi ${payload.username}</span>
-    <button onclick="logout()">Logout</button>
+    <a class="px-2" href="/dashboard">Dashboard</a>
+    <button class="btn btn-danger" onclick="logout()">Logout</button>
   `;
 }
 

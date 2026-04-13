@@ -13,15 +13,90 @@
 </head>
 
 <body>
+
     <div id="navbar"></div>
     <script src="/js/navbar.js"></script>
 
-    <h1>Dashboard</h1>
+    <div class="container">
 
-    <h2 id="msg"></h2>
+        <h1>Dashboard</h1>
+        <div class="card">
+            <h5 class="card-header">Information de compte</h5>
+            <div class="card-body">
+                <h5 class="card-title">Bienvenue <span id="username"></span></h5>
+                <p class="card-text">Vous etes: <span id="role"></span></p>
+                <a href="/settings" class="btn btn-primary" id="editProfileBtn">Modifier votre profil</a>
+            </div>
+        </div>
+
+        <div id="createRestaurant">
+            <h4>Creer un restaurant</h4>
+            <form id="createRestaurantForm">
+                <div class="form-group">
+                    <label for="name">Nom du restaurant</label>
+                    <input class="form-control" name="name" type="text" placeholder="Hawthorn">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Addresse du restaurant</label>
+                    <input class="form-control" name="address" type="text" placeholder="Timbuktu">
+                </div>
+
+                <button class="btn btn-primary" type="submit">Valider</button>
+            </form>
+        </div>
+    </div>
 
     <script>
-        if (!localStorage.getItem("token")) window.location.href = "/api/auth/login";
+        if (!localStorage.getItem("token")) window.location.href = "/";
+    </script>
+
+    <script>
+        // Dans un premier temps, completer le texte manquant
+        const token = localStorage.getItem("token");
+        async function loadDashboard() {
+            try {
+                if (!token) window.location.href = "/";
+
+                const res = await fetch("/api/me", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) throw new Error("Mauvais token / session expiree")
+
+                const data = await res.json();
+
+                document.getElementById("username").textContent = data.username;
+                document.getElementById("role").textContent = data.role;
+
+                if (data.hasRestaurant) document.getElementById("createRestaurant").classList.add("d-none")
+            } catch (error) {
+                console.error(error)
+                window.location.href = "/"
+            }
+        }
+
+        loadDashboard()
+    </script>
+
+    <script>
+        async function createRestaurant() {
+            document.getElementById("createRestaurantForm").addEventListener("submit", async (e) => {
+                e.preventDefault()
+
+                const name = e.target.name.value;
+                const address = e.target.address.value;
+
+                // requete vers un autre service
+                const res = await fetch("/api/restaurant/create");
+
+                if (!res.ok) throw new Error("Mauvais token / session expiree")
+
+            })
+        }
     </script>
 
     <div id="footer"></div>
