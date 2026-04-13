@@ -29,8 +29,6 @@ async function editMe(req, res, next) {
             return res.status(400).json({ message: "Wrong role" })
         }
 
-        
-
         const validationError = validateUserCredentials(username, email, password, role);
         if (validationError) {
             return res.status(400).json({ message: validationError })
@@ -38,10 +36,10 @@ async function editMe(req, res, next) {
         
         const updatedUser = await editUser(userId, updates);
 
-        res.status(200).json({ message: "Applied modifications successfully", data: updatedUser });
+        return res.status(200).json({ message: "Applied modifications successfully", data: updatedUser });
     } catch (error) {
-        console.error(error)
-        return res.status(400).json({ message: "Internal server error" })
+        console.error(error.message)
+        return res.status(400).json({ message: (error.status ? error.message : "Internal server error") })
     }
 }
 

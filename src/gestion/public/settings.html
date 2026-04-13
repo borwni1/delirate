@@ -61,7 +61,10 @@
                     }
                 })
 
-                if (!res.ok) throw new Error("The HTTP request did not succeed")
+                if (!res.ok) {
+                    const error = await res.json()
+                    throw new Error(error.message ? error.message : "The HTTP request did not suceed")
+                }
 
                 const data = await res.json();
                 document.getElementById("username").value = await data.username
@@ -80,6 +83,8 @@
                 });
             } catch (error) {
                 console.error(error)
+                console.log(data);
+
                 showAlertDanger(data.message)
                 window.location.href = "/"
             }
@@ -102,7 +107,10 @@
                     body: JSON.stringify({ username, email, role })
                 })
 
-                if (!res.ok) throw new Error("The HTTP request did not succeed")
+                if (!res.ok) {
+                    const error = await res.json()
+                    throw new Error(error.message ? error.message : "The HTTP request did not suceed")
+                }
 
                 const data = await res.json();
 
