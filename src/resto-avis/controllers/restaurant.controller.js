@@ -1,27 +1,10 @@
-// Creer, modifier, supprimer restaurant
-// Modification de la page web/menu, changer de proprietaire
-
-const { resourceUsage } = require("node:process")
+const { createRestaurantService, editRestaurantService } = require("../services/restaurant.service");
 const { validateRestaurantName, validateRestaurantAddress } = require("../utils/validateFields")
 
-// Ce fichier: controler les champs completes par l'utilisateur
+async function createRestaurant(req, res) {
 
-// CREATE TABLE restaurants (
-//     id SERIAL PRIMARY KEY,
-//     name VARCHAR(100) NOT NULL,
-//     owner_id INT REFERENCES users(id),
-//     address TEXT,
-//     created_at TIMESTAMP DEFAULT NOW()
-// );
-
-// Champs a prendre en compte:
-// - Nom
-// - Adresse
-
-
-
-async function createRestaurant(req, res, next) {
     const { restaurantName, restaurantAddress } = req.body
+    const { id } = req.user // parce qu'on decode le token et on le met dans `req.user`
 
     try {
         const validationError = validateRestaurantInformation(restaurantName, restaurantAddress);
@@ -29,11 +12,32 @@ async function createRestaurant(req, res, next) {
             return res.status(400).json({ message: validationError })
         }
 
-        // Les strings suivent les conventions, on peut commencer relayer le travail au service, pour verifier l'unicite dans la db et inserer
+        const restaurant = await createRestaurantService(id, restaurantName, restaurantAddress)
 
-        next();
+        // TODO Renvoie restaurant mais je sais pas pour quoi faire, a voir plus tard
+        return res.status(201).json({ message: "Successfully created the restaurant", restaurant: restaurant })
     } catch (error) {
         console.error(error)
+        return res.status(400).json({ message: error.message })
+    }
+}
+
+async function editRestaurant(req, res) {
+    const { restaurantName, restaurantAddress } = req.body
+    const { id } = req.user;
+
+    try {
+        const validationError = !validateRestaurantInformation(restaurantName, restaurantAddress)
+        if (validationError) {
+            return res.status(400).json({ message: validationError })
+        }
+
+        const restaurant = editRestaurantService(restaurantName, restaurantAddress)
+        
+        return res.status(201).json({ message: "Successfully updated the restaurant", restaurant: restaurant })
+    } catch (error) {
+        // TODO Pas safe de renvoyer error.message: exposition du backend
+        console.error(error);
         return res.status(400).json({ message: error.message })
     }
 }
@@ -44,4 +48,4 @@ function validateRestaurantInformation(restaurantName, restaurantAddress) {
     return null;
 }
 
-module.exports = { createRestaurant }
+module.exports = { createRestaurant, editRestaurant }
