@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resto-avis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resto-avis
+  template:
+    metadata:
+      labels:
+        app: resto-avis
+    spec:
+      containers:
+        - name: resto-avis
+          image: resto-avis-service:latest
+          imagePullPolicy: Never   # important si tu build en local (minikube/docker)
+
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          
+          ports:
+            - containerPort: 3000
+
+          env:
+            - name: port
+              value: "3000"
+
+            - name: DB_HOST
+              value: postgres-service
+
+            - name: DB_PORT
+              value: "5432"
+
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: JWT_SECRET
+              value: "your_jwt_secret"
+
+      volumes:
+        - name: app-code
+          hostPath:
+            path: /home/50euros/Documents/delirate/src/resto-avis
+            type: Directory

@@ -9,8 +9,8 @@ const { requireRole } = require("../../middleware/role.middleware")
 
 // TODO role ecrit en texte dans les fonctions : pas scalable
 
-router.post("/restaurant/create", authMiddleware, requireRole("OWNER"), createRestaurant, createRestaurantService);
+router.post("/create", authMiddleware, requireRole("OWNER"), createRestaurant, createRestaurantService);
 
-router.post("/restaurant/edit", authMiddleware, requireRole("OWNER"), editRestaurant, editRestaurantService);
+router.post("/edit", authMiddleware, requireRole("OWNER"), editRestaurant, editRestaurantService);
 
 module.exports = router;

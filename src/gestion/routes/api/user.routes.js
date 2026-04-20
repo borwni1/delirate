@@ -26,8 +26,8 @@ const { me, editMe } = require("../../controllers/user.controller")
 
 // router.post("/login", login);
 
-router.get("/me", authMiddleware, me);
+router.get("/", authMiddleware, me);
 
-router.post("/me/edit", authMiddleware, editMe);
+router.post("/edit", authMiddleware, editMe);
 
 module.exports = router;
