@@ -1,0 +1,49 @@
+const pool = require('./index');
+
+async function usernameExists(username) {
+    const res = await pool.query("SELECT 1 FROM users WHERE username = $1", [username]);
+    return res.rowCount > 0;
+}
+
+async function emailExists(email) {
+    const res = await pool.query("SELECT 1 FROM users WHERE email = $1", [email]);
+    return res.rowCount > 0;
+}
+
+async function userById(userId) {
+    const res = await pool.query("SELECT id, username, email, role FROM users WHERE id = $1", [userId]);
+    return res;
+}
+
+async function editUser(userId, updates) {
+    const allowedFields = ["username", "email", "role", "password"];
+
+    const fields = [];
+    const values = [];
+    
+    for (const [key, value] of Object.entries(updates)) {
+        if (!allowedFields.includes(key)) continue;
+
+        values.push(value);
+        fields.push(`${key} = $${values.length}`);
+    }
+
+    if (fields.length === 0) {
+        throw new Error("No valid fields to update");
+    }
+
+    const query = `
+        UPDATE users
+        SET ${fields.join(", ")}
+        WHERE id = $${values.length + 1}
+        RETURNING id, username, email
+    `;
+
+    values.push(userId);
+
+    const result = await pool.query(query, values);
+
+    return result.rows[0];
+}
+
+module.exports = { usernameExists, emailExists, userById, editUser }

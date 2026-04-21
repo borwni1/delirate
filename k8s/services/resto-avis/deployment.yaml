@@ -17,9 +17,9 @@ spec:
           image: resto-avis-service:latest
           imagePullPolicy: Never   # important si tu build en local (minikube/docker)
 
-          volumeMounts:
-            - name: app-code
-              mountPath: /app
+          # volumeMounts:
+          #   - name: app-code
+          #     mountPath: /app
           
           ports:
             - containerPort: 3000
@@ -55,8 +55,8 @@ spec:
             - name: JWT_SECRET
               value: "your_jwt_secret"
 
-      volumes:
-        - name: app-code
-          hostPath:
-            path: /home/50euros/Documents/delirate/src/resto-avis
-            type: Directory
+      # volumes:
+      #   - name: app-code
+      #     hostPath:
+      #       path: /home/50euros/Documents/delirate/src/resto-avis
+      #       type: Directory
