@@ -11,7 +11,19 @@ async function emailExists(email) {
 }
 
 async function userById(userId) {
-    const res = await pool.query("SELECT id, username, email, role FROM users WHERE id = $1", [userId]);
+    const res = await pool.query(
+        `
+        SELECT 
+            u.id,
+            u.username,
+            u.email,
+            u.role,
+        FROM users u
+        WHERE u.id = $1
+        `,
+        [userId]
+    );
+
     return res;
 }
 
@@ -72,4 +84,4 @@ async function editUser(userId, updates) {
     return result.rows[0];
 }
 
-module.exports = { usernameExists, emailExists, userById, editUser }
+module.exports = { usernameExists, emailExists, userById, editUser, restaurantByUserId }

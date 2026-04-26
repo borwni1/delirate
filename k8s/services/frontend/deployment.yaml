@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: frontend-service:latest
+          imagePullPolicy: Never   # important si tu build en local (minikube/docker)
+
+          # volumeMounts:
+          #   - name: app-code
+          #     mountPath: /app
+          
+          ports:
+            - containerPort: 3000
+      # volumes:
+      #   - name: app-code
+      #     hostPath:
+      #       path: /home/50euros/Documents/delirate/src/gestion
+      #       type: Directory

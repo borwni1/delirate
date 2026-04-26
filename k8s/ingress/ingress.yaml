@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+  - host: monsite.com
+    http:
+      paths:
+      # micro service gestion
+      # gestion/routes/api/auth.routes.js
+      - path: /api/auth
+        pathType: Prefix
+        backend:
+          service:
+            name: gestion-service
+            port:
+              number: 3000
+      # gestion/routes/api/user.routes.js
+      - path: /api/me
+        pathType: Prefix
+        backend:
+          service:
+            name: gestion-service
+            port:
+              number: 3000
+
+      # micro service resto-avis
+      # resto-avis/routes/api/restaurant.routes.js
+      - path: /api/restaurant
+        pathType: Prefix
+        backend:
+          service:
+            name: resto-avis-service
+            port:
+              number: 3000
+
+      # micro services pages statiques
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 3000

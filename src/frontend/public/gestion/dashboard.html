@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <div id="navbar"></div>
+    <script src="/js/navbar.js"></script>
+
+    <div class="container">
+
+        <h1>Dashboard</h1>
+        <div class="card">
+            <h5 class="card-header">Information de compte</h5>
+            <div class="card-body">
+                <h5 class="card-title">Bienvenue <span id="username"></span></h5>
+                <p class="card-text">Vous etes: <span id="role"></span></p>
+                <a href="/settings" class="btn btn-primary" id="editProfileBtn">Modifier votre profil</a>
+            </div>
+        </div>
+
+        <div id="createRestaurant">
+            <h4>Creer un restaurant</h4>
+            <form id="createRestaurantForm">
+                <div class="form-group">
+                    <label>Nom du restaurant</label>
+                    <input class="form-control" name="restaurantName" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Adresse du restaurant</label>
+                    <input class="form-control" name="restaurantAddress" type="text">
+                </div>
+
+                <button class="btn btn-primary" type="submit">Valider</button>
+            </form>
+        </div>
+
+        <div id="restaurantEdits">
+            <h4>Modifier votre restaurant</h4>
+            <form action="" id="editRestaurantName">
+                <div class="form-group">
+                    <label>Nom du restaurant</label>
+                    <input class="form-control" name="restaurantName" type="text">
+
+                    <button class="btn btn-primary" type="submit">Valider</button>
+                </div>
+            </form>
+
+            <form action="" id="editRestaurantAddress">
+                <div class="form-group">
+                    <label>Adresse du restaurant</label>
+                    <input class="form-control" name="restaurantAddress" type="text">
+
+                    <button class="btn btn-primary" type="submit">Valider</button>
+                </div>
+            </form>
+
+            <div id="controlRestaurantMenu" class="form-group">
+                <!-- Si menu existe, bouton Modifier Menu, sinon bouton Ajouter Menu -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (!localStorage.getItem("token")) window.location.href = "/";
+    </script>
+
+    <script>
+        // Dans un premier temps, completer le texte manquant
+        const token = localStorage.getItem("token");
+
+        function editRestaurantForm(restaurantId) {
+            document.getElementById("editRestaurant").innerHTML = ""
+        }
+
+        async function loadDashboard() {
+            try {
+                if (!token) window.location.href = "/";
+
+                const res = await fetch("/api/me", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) throw new Error("Mauvais token / session expiree")
+
+                const data = await res.json();
+
+                document.getElementById("username").textContent = data.username;
+                document.getElementById("role").textContent = data.role;
+
+                if (data.role == "OWNER") {
+                    // loadCreateRestaurantForm();
+                    attachCreateRestaurantListener();
+                }
+
+                if (data.restaurant) {
+                    // Pas besoin de creer un autre
+                    document.getElementById("createRestaurant").classList.add("d-none");
+
+                    if (data.menu) {
+                        document.getElementById("controlRestaurantMenu").innerHTML = `
+                            <a href="">Modifier le Menu</a>
+                        `;
+                    } else {
+                        document.getElementById("controlRestaurantMenu").innerHTML = `
+                            <a href="">Creer un Menu</a>
+                        `;
+                    }
+                } else {
+                    document.getElementById("restaurantEdits").classList.add("d-none");
+                }
+            } catch (error) {
+                console.error(error)
+                // window.location.href = "/"
+            }
+        }
+
+        loadDashboard()
+    </script>
+
+    <script>
+        async function attachCreateRestaurantListener() {
+            const form = document.getElementById("createRestaurantForm");
+            if (!form) return;
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const restaurantName = e.target.restaurantName.value;
+                const restaurantAddress = e.target.restaurantAddress.value;
+
+                const res = await fetch("/api/restaurant/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantName, restaurantAddress })
+                });
+
+                if (!res.ok) throw new Error("Request failed");
+
+                const data = await res.json();
+                console.log(data);
+            });
+        }
+    </script>
+
+    <script>
+        document.getElementById("editRestaurantName").addEventListener("submit", async (e) => {
+            try {
+                e.preventDefault();
+
+                const restaurantName = e.target.restaurantName;
+
+                const res = await fetch("/api/restaurant/edit/name", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantName })
+                })
+
+                if (!res.ok()) throw new Error("Request failed");
+
+                const data = await res.json();
+                    
+                // If reponse OK, mettre une notification OU refresh la page
+            } catch (error) {
+                console.error(error)
+            }
+        })
+    </script>
+
+    <script>
+        document.getElementById("editRestaurantAddress").addEventListener("submit", async (e) => {
+            try {
+                e.preventDefault();
+
+                const restaurantAddress = e.target.restaurantAddress;
+
+                const res = await fetch("/api/restaurant/edit/address", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantAddress })
+                })
+
+                if (!res.ok()) throw new Error("Request failed");
+
+                const data = await res.json();
+
+                // If reponse OK, mettre une notification OU refresh la page
+            } catch (error) {
+                console.error(error)
+            }
+        })
+    </script>
+
+    <div id="footer"></div>
+    <script src="/js/footer.js"></script>
+</body>
+
+</html>

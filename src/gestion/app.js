@@ -4,7 +4,7 @@ const express = require("express");
 
 const authRoutes = require("./routes/api/auth.routes")
 const userRoutes = require("./routes/api/user.routes")
-const webRoutes = require("./routes/web.routes")
+// const webRoutes = require("./routes/web.routes")
 
 const app = express();
 
@@ -17,9 +17,9 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes)
 
-app.use("/api", userRoutes)
+app.use("/api/me", userRoutes)
 
-app.use("/", webRoutes)
+// app.use("/", webRoutes)
 
 // app.use("/restaurant", restRoutes);
 

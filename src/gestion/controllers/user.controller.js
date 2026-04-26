@@ -9,7 +9,7 @@ async function me(req, res) {
             username: user.username,
             role: user.role,
             email: user.email,
-            availableRoles: ["USER", "GUIDE", "OWNER"]
+            availableRoles: ["USER", "GUIDE", "OWNER"],
         })
         
     } catch (error) {
