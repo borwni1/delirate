@@ -2,7 +2,7 @@
 
 const express = require("express");
 
-const webRoutes = require("./routes/web.routes")
+// const webRoutes = require("./routes/web.routes")
 
 const restaurantRoutes = require("./routes/api/restaurant.routes")
 
@@ -17,6 +17,6 @@ app.use(express.json());
 
 app.use("/api/restaurant", restaurantRoutes)
 
-app.use("/", webRoutes)
+// app.use("/", webRoutes)
 
 module.exports = app;

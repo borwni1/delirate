@@ -1,27 +1,21 @@
 const validateRestaurantName = function (restaurantName) {
-    if (typeof restaurantName != "string") {
+    if (typeof restaurantName !== "string") {
         return false;
     }
 
-    const regex = /[a-zA-Z -]+/
-    if (!regex.test(restaurantName)) {
-        return false;
-    }
+    const regex = /^[a-zA-Z -]+$/;
 
-    return true;
-}
+    return regex.test(restaurantName);
+};
 
 const validateRestaurantAddress = function (restaurantAddress) {
-    if (typeof restaurantName != "string") {
+    if (typeof restaurantAddress !== "string") {
         return false;
     }
 
-    const regex = /[a-zA-Z -]+/
-    if (!regex.test(restaurantAddress)) {
-        return false;
-    }
+    const regex = /^[a-zA-Z0-9\s,'-]+$/;
 
-    return true;
-}
+    return regex.test(restaurantAddress);
+};
 
 module.exports = { validateRestaurantName, validateRestaurantAddress };

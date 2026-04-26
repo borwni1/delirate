@@ -33,17 +33,42 @@
             <h4>Creer un restaurant</h4>
             <form id="createRestaurantForm">
                 <div class="form-group">
-                    <label for="restaurantName">Nom du restaurant</label>
-                    <input class="form-control" name="restaurantName" type="text" placeholder="Hawthorn">
+                    <label>Nom du restaurant</label>
+                    <input class="form-control" name="restaurantName" type="text">
                 </div>
 
                 <div class="form-group">
-                    <label for="restaurantAddress">Addresse du restaurant</label>
-                    <input class="form-control" name="restaurantAddress" type="text" placeholder="Timbuktu">
+                    <label>Adresse du restaurant</label>
+                    <input class="form-control" name="restaurantAddress" type="text">
                 </div>
 
                 <button class="btn btn-primary" type="submit">Valider</button>
             </form>
+        </div>
+
+        <div id="restaurantEdits">
+            <h4>Modifier votre restaurant</h4>
+            <form action="" id="editRestaurantName">
+                <div class="form-group">
+                    <label>Nom du restaurant</label>
+                    <input class="form-control" name="restaurantName" type="text">
+
+                    <button class="btn btn-primary" type="submit">Valider</button>
+                </div>
+            </form>
+
+            <form action="" id="editRestaurantAddress">
+                <div class="form-group">
+                    <label>Adresse du restaurant</label>
+                    <input class="form-control" name="restaurantAddress" type="text">
+
+                    <button class="btn btn-primary" type="submit">Valider</button>
+                </div>
+            </form>
+
+            <div id="controlRestaurantMenu" class="form-group">
+                <!-- Si menu existe, bouton Modifier Menu, sinon bouton Ajouter Menu -->
+            </div>
         </div>
     </div>
 
@@ -54,6 +79,11 @@
     <script>
         // Dans un premier temps, completer le texte manquant
         const token = localStorage.getItem("token");
+
+        function editRestaurantForm(restaurantId) {
+            document.getElementById("editRestaurant").innerHTML = ""
+        }
+
         async function loadDashboard() {
             try {
                 if (!token) window.location.href = "/";
@@ -72,10 +102,30 @@
                 document.getElementById("username").textContent = data.username;
                 document.getElementById("role").textContent = data.role;
 
-                if (data.hasRestaurant) document.getElementById("createRestaurant").classList.add("d-none")
+                if (data.role == "OWNER") {
+                    // loadCreateRestaurantForm();
+                    attachCreateRestaurantListener();
+                }
+
+                if (data.restaurant) {
+                    // Pas besoin de creer un autre
+                    document.getElementById("createRestaurant").classList.add("d-none");
+
+                    if (data.menu) {
+                        document.getElementById("controlRestaurantMenu").innerHTML = `
+                            <a href="">Modifier le Menu</a>
+                        `;
+                    } else {
+                        document.getElementById("controlRestaurantMenu").innerHTML = `
+                            <a href="">Creer un Menu</a>
+                        `;
+                    }
+                } else {
+                    document.getElementById("restaurantEdits").classList.add("d-none");
+                }
             } catch (error) {
                 console.error(error)
-                window.location.href = "/"
+                // window.location.href = "/"
             }
         }
 
@@ -83,20 +133,83 @@
     </script>
 
     <script>
-        async function createRestaurant() {
-            document.getElementById("createRestaurantForm").addEventListener("submit", async (e) => {
-                e.preventDefault()
+        async function attachCreateRestaurantListener() {
+            const form = document.getElementById("createRestaurantForm");
+            if (!form) return;
 
-                const name = e.target.name.value;
-                const address = e.target.address.value;
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
 
-                // requete vers un autre service
-                const res = await fetch("/api/restaurant/create");
+                const restaurantName = e.target.restaurantName.value;
+                const restaurantAddress = e.target.restaurantAddress.value;
 
-                if (!res.ok) throw new Error("Mauvais token / session expiree")
+                const res = await fetch("/api/restaurant/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantName, restaurantAddress })
+                });
 
-            })
+                if (!res.ok) throw new Error("Request failed");
+
+                const data = await res.json();
+                console.log(data);
+            });
         }
+    </script>
+
+    <script>
+        document.getElementById("editRestaurantName").addEventListener("submit", async (e) => {
+            try {
+                e.preventDefault();
+
+                const restaurantName = e.target.restaurantName;
+
+                const res = await fetch("/api/restaurant/edit/name", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantName })
+                })
+
+                if (!res.ok()) throw new Error("Request failed");
+
+                const data = await res.json();
+                    
+                // If reponse OK, mettre une notification OU refresh la page
+            } catch (error) {
+                console.error(error)
+            }
+        })
+    </script>
+
+    <script>
+        document.getElementById("editRestaurantAddress").addEventListener("submit", async (e) => {
+            try {
+                e.preventDefault();
+
+                const restaurantAddress = e.target.restaurantAddress;
+
+                const res = await fetch("/api/restaurant/edit/address", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ restaurantAddress })
+                })
+
+                if (!res.ok()) throw new Error("Request failed");
+
+                const data = await res.json();
+
+                // If reponse OK, mettre une notification OU refresh la page
+            } catch (error) {
+                console.error(error)
+            }
+        })
     </script>
 
     <div id="footer"></div>
